@@ -1,0 +1,13 @@
+# Test dependencies (not needed in production)
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing frameworks
+pytest==8.3.4
+pytest-playwright==0.6.2
+playwright==1.49.1
+
+# Additional test utilities
+pytest-timeout==2.3.1
+pytest-xdist==3.6.1  # For parallel test execution
