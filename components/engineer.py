@@ -53,7 +53,7 @@ def render_create_sensor_form():
 
             try:
                 with st.spinner("Loading..."):
-                    sensor = queries.create_sensor(
+                    queries.create_sensor(
                         name=name.strip(),
                         unit=unit.strip() if unit else None,
                         comment=comment.strip() if comment else None
