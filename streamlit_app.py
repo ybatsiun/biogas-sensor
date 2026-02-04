@@ -334,20 +334,14 @@ st.markdown("""
 # ============================================================================
 
 def get_app_version() -> str:
-    """Get current app version from git tag."""
+    """Get current app version from VERSION file."""
     try:
-        import subprocess
-        result = subprocess.run(
-            ['git', 'describe', '--tags', '--abbrev=0'],
-            capture_output=True,
-            text=True,
-            timeout=1
-        )
-        if result.returncode == 0:
-            return result.stdout.strip()
+        import os
+        version_file = os.path.join(os.path.dirname(__file__), 'VERSION')
+        with open(version_file, 'r') as f:
+            return f.read().strip()
     except:
-        pass
-    return "v0.1.4"
+        return "v0.1.10"
 
 
 def main():
