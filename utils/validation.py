@@ -2,9 +2,10 @@
 Validation utilities for user inputs.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone as tz
 from typing import Tuple, Optional
 import re
+from utils.timezone import utc_to_local
 
 
 def validate_numeric_value(value_str: str) -> Tuple[bool, Optional[float], Optional[str]]:
@@ -34,17 +35,26 @@ def validate_timestamp(timestamp: datetime) -> Tuple[bool, Optional[str]]:
     """
     Validate that a timestamp is not in the future.
 
+    The timestamp is expected to be in local time (naive datetime).
+    We compare it against current local time.
+
     Args:
-        timestamp: Datetime to validate
+        timestamp: Datetime to validate (naive, in local timezone)
 
     Returns:
         Tuple of (is_valid, error_message)
         - is_valid: True if timestamp is valid
         - error_message: Error message or None if valid
     """
-    now = datetime.now(timestamp.tzinfo)
+    # Get current UTC time and convert to local time
+    now_utc = datetime.now(tz.utc)
+    now_local = utc_to_local(now_utc)
 
-    if timestamp > now:
+    # Compare naive timestamps in local timezone
+    timestamp_naive = timestamp.replace(tzinfo=None)
+    now_local_naive = now_local.replace(tzinfo=None)
+
+    if timestamp_naive > now_local_naive:
         return False, "Cannot record future timestamps"
 
     return True, None
