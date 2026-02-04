@@ -271,17 +271,41 @@ st.markdown("""
             margin-bottom: 0.5rem;
         }
 
-        /* Make date/time inputs more mobile-friendly */
-        .stDateInput input, .stTimeInput input {
+        /* Make date/time inputs more mobile-friendly - use native pickers */
+        .stDateInput input[type="text"],
+        .stTimeInput input[type="text"] {
             font-size: 16px !important;
             min-height: 44px !important;
             padding: 12px !important;
+            cursor: pointer !important;
+        }
+
+        /* Force native date/time pickers on mobile - prevent keyboard */
+        .stDateInput input,
+        .stTimeInput input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         /* Improve date/time picker button size */
         .stDateInput button, .stTimeInput button {
             min-height: 44px !important;
             min-width: 44px !important;
+        }
+
+        /* Fix selectbox dropdown visibility in dark mode on mobile */
+        .stSelectbox [data-baseweb="select"] {
+            background-color: white !important;
+        }
+
+        .stSelectbox [role="option"] {
+            background-color: white !important;
+            color: #262730 !important;
+        }
+
+        .stSelectbox [role="option"]:hover {
+            background-color: #f0f2f6 !important;
         }
 
         /* Make buttons full-width on mobile */
