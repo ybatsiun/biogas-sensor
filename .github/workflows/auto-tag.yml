@@ -38,12 +38,32 @@ jobs:
           echo "📌 Latest tag: $LATEST_TAG"
           echo "🆕 New tag: $NEW_TAG"
 
+      - name: 📝 Update VERSION file
+        env:
+          NEW_TAG: ${{ steps.get_tag.outputs.new_tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Update VERSION file
+          echo "$NEW_TAG" > VERSION
+
+          # Commit and push VERSION file
+          git add VERSION
+          git commit -m "chore: bump version to $NEW_TAG [skip ci]"
+          git push origin main
+
+          echo "✅ Updated VERSION file to $NEW_TAG"
+
       - name: 🎯 Create and push tag
         env:
           NEW_TAG: ${{ steps.get_tag.outputs.new_tag }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Pull latest changes (includes VERSION update)
+          git pull origin main
 
           # Create annotated tag
           git tag -a "$NEW_TAG" -m "Release $NEW_TAG"
