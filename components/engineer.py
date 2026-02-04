@@ -207,12 +207,17 @@ def render_create_record_form():
                 format_func=lambda x: sensor_options[x]
             )
 
-            # Timestamp with current time as default
+            # Timestamp with current time as default (in local timezone)
+            from utils.timezone import utc_to_local
+            from datetime import timezone as tz
+            now_utc = datetime.now(tz.utc)
+            now_local = utc_to_local(now_utc)
+
             col1, col2 = st.columns(2)
             with col1:
-                recorded_date = st.date_input("Date*", value=datetime.now())
+                recorded_date = st.date_input("Date*", value=now_local.date())
             with col2:
-                recorded_time = st.time_input("Time*", value=datetime.now().time())
+                recorded_time = st.time_input("Time*", value=now_local.time())
 
             # Value input
             value_str = st.text_input("Value*", placeholder="e.g., 37.5")
