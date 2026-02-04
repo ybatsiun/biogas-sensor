@@ -9,6 +9,7 @@ import time
 from database import queries
 from utils.validation import validate_numeric_value, validate_timestamp, validate_required_field, parse_timestamp
 from utils.i18n import t
+from utils.timezone import local_to_utc, utc_to_local, format_local_datetime
 
 
 def render_engineer_interface():
@@ -226,8 +227,8 @@ def render_create_record_form():
             submitted = st.form_submit_button("Add Record", use_container_width=True)
 
             if submitted:
-                # Combine date and time
-                recorded_at = datetime.combine(recorded_date, recorded_time)
+                # Combine date and time (local timezone)
+                recorded_at_local = datetime.combine(recorded_date, recorded_time)
 
                 # Validate value
                 is_valid_num, value, num_error = validate_numeric_value(value_str)
@@ -236,16 +237,18 @@ def render_create_record_form():
                     return
 
                 # Validate timestamp
-                is_valid_time, time_error = validate_timestamp(recorded_at)
+                is_valid_time, time_error = validate_timestamp(recorded_at_local)
                 if not is_valid_time:
                     st.error(time_error)
                     return
 
                 try:
                     with st.spinner("Loading..."):
+                        # Convert local time to UTC for storage
+                        recorded_at_utc = local_to_utc(recorded_at_local)
                         record = queries.create_record(
                             sensor_id=selected_sensor_id,
-                            recorded_at=recorded_at,
+                            recorded_at=recorded_at_utc,
                             value=value
                         )
                     st.toast(f"✅ Record added successfully! Value: {value}", icon="✅")
@@ -272,9 +275,9 @@ def render_record_list(limit: int = 100):
             with st.container():
                 col1, col2, col3 = st.columns([3, 1, 1])
 
-                # Format the timestamp
-                recorded_at = parse_timestamp(record['recorded_at'])
-                formatted_time = recorded_at.strftime("%Y-%m-%d %H:%M:%S")
+                # Format the timestamp in local timezone
+                recorded_at_utc = parse_timestamp(record['recorded_at'])
+                formatted_time = format_local_datetime(recorded_at_utc)
 
                 with col1:
                     sensor_name = record['sensors']['name']
@@ -325,15 +328,16 @@ def render_edit_record_form(record: dict):
                 format_func=lambda x: sensor_options[x]
             )
 
-            # Parse existing timestamp
-            recorded_at = parse_timestamp(record['recorded_at'])
+            # Parse existing timestamp (UTC) and convert to local
+            recorded_at_utc = parse_timestamp(record['recorded_at'])
+            recorded_at_local = utc_to_local(recorded_at_utc)
 
-            # Timestamp inputs
+            # Timestamp inputs (in local timezone)
             col1, col2 = st.columns(2)
             with col1:
-                recorded_date = st.date_input("Date*", value=recorded_at.date())
+                recorded_date = st.date_input("Date*", value=recorded_at_local.date())
             with col2:
-                recorded_time = st.time_input("Time*", value=recorded_at.time())
+                recorded_time = st.time_input("Time*", value=recorded_at_local.time())
 
             # Value input
             value_str = st.text_input("Value*", value=str(record['value']))
@@ -345,8 +349,8 @@ def render_edit_record_form(record: dict):
                 cancelled = st.form_submit_button("❌ Cancel", use_container_width=True)
 
             if submitted:
-                # Combine date and time
-                new_recorded_at = datetime.combine(recorded_date, recorded_time)
+                # Combine date and time (local timezone)
+                new_recorded_at_local = datetime.combine(recorded_date, recorded_time)
 
                 # Validate value
                 is_valid_num, value, num_error = validate_numeric_value(value_str)
@@ -355,17 +359,19 @@ def render_edit_record_form(record: dict):
                     return
 
                 # Validate timestamp
-                is_valid_time, time_error = validate_timestamp(new_recorded_at)
+                is_valid_time, time_error = validate_timestamp(new_recorded_at_local)
                 if not is_valid_time:
                     st.error(time_error)
                     return
 
                 try:
                     with st.spinner("Loading..."):
+                        # Convert local time to UTC for storage
+                        new_recorded_at_utc = local_to_utc(new_recorded_at_local)
                         queries.update_record(
                             record_id=record['id'],
                             sensor_id=selected_sensor_id,
-                            recorded_at=new_recorded_at,
+                            recorded_at=new_recorded_at_utc,
                             value=value
                         )
                     st.toast("✅ Record updated successfully!", icon="✅")

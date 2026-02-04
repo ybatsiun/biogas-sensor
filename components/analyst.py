@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from database import queries
 from utils.validation import parse_timestamp
 from utils.i18n import t
+from utils.timezone import local_to_utc, utc_to_local, format_local_datetime
 
 
 def render_analyst_interface():
@@ -82,16 +83,20 @@ def render_charts_tab():
             # Default: today
             end_date = st.date_input("End Date", value=datetime.now())
 
-        # Convert dates to datetime
-        start_datetime = datetime.combine(start_date, datetime.min.time())
-        end_datetime = datetime.combine(end_date, datetime.max.time())
+        # Convert dates to datetime (local timezone) and then to UTC for querying
+        start_datetime_local = datetime.combine(start_date, datetime.min.time())
+        end_datetime_local = datetime.combine(end_date, datetime.max.time())
+
+        # Convert to UTC for database query
+        start_datetime_utc = local_to_utc(start_datetime_local)
+        end_datetime_utc = local_to_utc(end_datetime_local)
 
         # Fetch and display chart
         if not selected_sensor_ids:
             st.info("ℹ️ Please select at least one sensor to display the chart.")
             return
 
-        render_chart(selected_sensor_ids, start_datetime, end_datetime)
+        render_chart(selected_sensor_ids, start_datetime_utc, end_datetime_utc)
 
     except Exception as e:
         st.error(f"❌ Failed to render charts: {str(e)}")
@@ -118,9 +123,10 @@ def render_chart(sensor_ids: list, start_date: datetime, end_date: datetime):
         df['sensor_name'] = df['sensors'].apply(lambda x: x['name'])
         df['sensor_unit'] = df['sensors'].apply(lambda x: x['unit'])
 
-        # Parse timestamps safely
+        # Parse timestamps safely and convert to local timezone
         df['recorded_at'] = df['recorded_at'].apply(lambda x: parse_timestamp(x) if isinstance(x, str) else x)
-        df['recorded_at'] = pd.to_datetime(df['recorded_at'], utc=True)
+        df['recorded_at'] = df['recorded_at'].apply(lambda x: utc_to_local(x))
+        df['recorded_at'] = pd.to_datetime(df['recorded_at'])
 
         # Create Plotly figure
         fig = go.Figure()
@@ -241,25 +247,30 @@ def render_data_table_tab():
             st.markdown("&nbsp;")  # Spacing
             apply_filter = st.button("Apply Filters", use_container_width=True)
 
-        # Custom date range if selected
+        # Custom date range if selected (convert to UTC for querying)
         start_date = None
         end_date = None
 
         if date_range_option == "Custom":
             col1, col2 = st.columns(2)
             with col1:
-                start_date = st.date_input("Start Date", value=datetime.now() - timedelta(days=30))
+                start_date_input = st.date_input("Start Date", value=datetime.now() - timedelta(days=30))
             with col2:
-                end_date = st.date_input("End Date", value=datetime.now())
+                end_date_input = st.date_input("End Date", value=datetime.now())
 
-            start_date = datetime.combine(start_date, datetime.min.time())
-            end_date = datetime.combine(end_date, datetime.max.time())
+            start_date_local = datetime.combine(start_date_input, datetime.min.time())
+            end_date_local = datetime.combine(end_date_input, datetime.max.time())
+            start_date = local_to_utc(start_date_local)
+            end_date = local_to_utc(end_date_local)
         elif date_range_option == "Last 7 days":
-            start_date = datetime.now() - timedelta(days=7)
+            start_date_local = datetime.now() - timedelta(days=7)
+            start_date = local_to_utc(start_date_local)
         elif date_range_option == "Last 30 days":
-            start_date = datetime.now() - timedelta(days=30)
+            start_date_local = datetime.now() - timedelta(days=30)
+            start_date = local_to_utc(start_date_local)
         elif date_range_option == "Last 90 days":
-            start_date = datetime.now() - timedelta(days=90)
+            start_date_local = datetime.now() - timedelta(days=90)
+            start_date = local_to_utc(start_date_local)
 
         # Fetch data
         sensor_ids = None if selected_sensor == "all" else [selected_sensor]
@@ -279,15 +290,16 @@ def render_data_table_tab():
         df['sensor_name'] = df['sensors'].apply(lambda x: x['name'])
         df['sensor_unit'] = df['sensors'].apply(lambda x: x['unit'] if x['unit'] else '')
 
-        # Parse timestamps safely
+        # Parse timestamps safely and convert to local timezone
         df['recorded_at'] = df['recorded_at'].apply(lambda x: parse_timestamp(x) if isinstance(x, str) else x)
-        df['recorded_at'] = pd.to_datetime(df['recorded_at'], utc=True)
+        df['recorded_at'] = df['recorded_at'].apply(lambda x: utc_to_local(x))
+        df['recorded_at'] = pd.to_datetime(df['recorded_at'])
 
         # Select and rename columns for display
         display_df = df[['sensor_name', 'sensor_unit', 'recorded_at', 'value']].copy()
         display_df.columns = ['Sensor', 'Unit', 'Timestamp', 'Value']
 
-        # Format timestamp
+        # Format timestamp (already in local timezone)
         display_df['Timestamp'] = display_df['Timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
 
         # Sort options
