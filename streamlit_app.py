@@ -47,7 +47,7 @@ st.markdown("""
 
     /* Hide Streamlit menu and deploy button */
     #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    footer {display: none !important;}
     .stDeployButton {display: none;}
 
     /* Hide header toolbar but keep spinner */
@@ -155,12 +155,14 @@ st.markdown("""
 
     [role="listbox"] {
         z-index: 99999 !important;
+        position: fixed !important;
     }
 
     /* Ensure dropdown options are fully visible */
     [data-baseweb="menu"] {
         z-index: 99999 !important;
         max-height: 300px !important;
+        overflow-y: auto !important;
     }
 
     /* Fix dropdown list positioning */
@@ -168,6 +170,9 @@ st.markdown("""
         z-index: 99999 !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
         background: white !important;
+        position: fixed !important;
+        overflow-y: auto !important;
+        max-height: 300px !important;
     }
 
     /* Pointer cursor for dropdown options */
@@ -230,17 +235,17 @@ st.markdown("""
         border-radius: 5px;
     }
 
-    /* Container spacing */
+    /* Container spacing - extra bottom padding for dropdown */
     .block-container {
         padding-top: 2rem;
-        padding-bottom: 2rem;
+        padding-bottom: 8rem;
     }
 
     /* Mobile optimization - reduce padding and margins */
     @media only screen and (max-width: 768px) {
         .block-container {
             padding-top: 1rem;
-            padding-bottom: 1rem;
+            padding-bottom: 10rem;
             padding-left: 1rem;
             padding-right: 1rem;
         }
