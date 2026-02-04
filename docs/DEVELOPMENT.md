@@ -1,40 +1,50 @@
 # Development Workflow
 
-Git workflow for the Biogas Sensor App optimized for vibe-development with Claude Code.
+Git workflow for the Biogas Sensor App using **GitHub Flow** with ephemeral feature branches.
 
 ---
 
-## 🌳 Branch Strategy
+## 🌳 Branch Strategy (GitHub Flow)
 
 ```
 main (production)
+  ↓ Tagged: v0.1.0, v0.1.1, v0.1.2...
+  ↓ Auto-deploys to Streamlit Cloud
   ↓
-  Tagged: v0.1.0, v0.1.1, v0.1.2...
-  ↓
-develop (development)
-  ↓
-  Your work happens here
+  ├─ feature/... (created fresh, deleted after merge)
+  ├─ fix/...     (created fresh, deleted after merge)
+  └─ docs/...    (created fresh, deleted after merge)
 ```
 
-### Branches
+### **Branches**
 
-- **`main`** - Production branch, auto-deploys to Streamlit Cloud
-- **`develop`** - Development branch, your active work
+- **`main`** - Production branch, auto-deploys to Streamlit Cloud, tagged releases
+- **Feature branches** - Short-lived branches for work, deleted after merge
+
+### **Key Principles**
+
+- ✅ Always create feature branches from latest `main`
+- ✅ Feature branches are **ephemeral** (deleted after merge)
+- ✅ No long-lived development branch
+- ✅ Clean, simple, no "X commits ahead" confusion
 
 ---
 
 ## 💻 Daily Development Workflow
 
-### **Starting Work**
+### **Starting New Work**
 
 ```bash
-# Make sure you're on develop
-git checkout develop
+# 1. Get latest main
+git checkout main
+git pull origin main
 
-# Pull latest changes
-git pull origin develop
+# 2. Create fresh feature branch
+git checkout -b feature/cool-thing
+# or use generic name:
+git checkout -b develop
 
-# Start coding with Claude Code! 🎉
+# Now you're ready to code! 🎉
 ```
 
 ### **Making Changes (Vibe Mode)**
@@ -45,13 +55,15 @@ git pull origin develop
 
 # Commit when you feel like it (no hooks, no friction)
 git add .
-git commit -m "feat: add new feature"
+git commit -m "feat: add cool thing"
 
 # Keep committing as you go
 git commit -m "fix: minor adjustment"
-git commit -m "refactor: improve code"
+git commit -m "docs: update readme"
 
 # Push to GitHub when ready
+git push origin feature/cool-thing
+# or:
 git push origin develop
 ```
 
@@ -66,11 +78,11 @@ When you're ready to release:
 ### **Option A: Using GitHub CLI (Recommended)**
 
 ```bash
-# From develop branch
+# From your feature branch
 gh pr create \
   --base main \
-  --head develop \
-  --title "Release: [Brief description]" \
+  --head feature/cool-thing \
+  --title "Release: Brief description" \
   --body "## Changes
 - Feature 1
 - Feature 2
@@ -78,9 +90,11 @@ gh pr create \
 
 Ready to deploy to production."
 
-# After PR is reviewed (or immediately if solo)
-gh pr merge --squash --delete-branch=false
+# Merge with auto-delete
+gh pr merge --squash --delete-branch
 ```
+
+**✨ That's it!** Branch is deleted automatically. Start fresh next time.
 
 ### **Option B: Using Helper Script**
 
@@ -89,15 +103,19 @@ gh pr merge --squash --delete-branch=false
 ./create_release.sh
 
 # Follow prompts
+# Script will create PR
+# Merge on GitHub with "Squash and merge" + check "Delete branch"
 ```
 
 ### **Option C: Using GitHub Web UI**
 
 1. Go to: https://github.com/ybatsiun/biogas-sensor/pulls
 2. Click "New pull request"
-3. Base: `main` ← Compare: `develop`
+3. Base: `main` ← Compare: `feature/cool-thing` (or `develop`)
 4. Create PR
 5. Click "Squash and merge"
+6. ✅ **Check "Delete branch"** ← Important!
+7. Confirm
 
 ---
 
@@ -110,7 +128,7 @@ Merge PR to main
   ↓
 GitHub Action runs
   ↓
-Creates tag: v0.1.0 → v0.1.1
+Creates tag: v0.1.0 → v0.1.1 → v0.1.2
   ↓
 Creates GitHub Release with notes
   ↓
@@ -119,31 +137,57 @@ Streamlit Cloud auto-deploys
 ✅ Production updated!
 ```
 
-### Version Format
+### **Version Format**
 
 - **Patch bumps automatically**: `v0.1.0` → `v0.1.1` → `v0.1.2`
 - **Manual major/minor**: Edit tag if needed
 
-### First Release
+---
+
+## 🔄 Complete Development Cycle
+
+### **Example: Adding a New Feature**
 
 ```bash
-# Start versioning from v0.1.0
-git tag -a v0.1.0 -m "Initial release"
-git push origin v0.1.0
+# 1. Start from main
+git checkout main
+git pull origin main
+
+# 2. Create feature branch
+git checkout -b feature/user-auth
+
+# 3. Work on feature (vibe mode)
+git add .
+git commit -m "feat: add user authentication"
+git commit -m "feat: add login page"
+git commit -m "fix: validation"
+git push origin feature/user-auth
+
+# 4. Create PR
+gh pr create --base main --head feature/user-auth \
+  --title "Feature: User Authentication"
+
+# 5. Merge with auto-delete
+gh pr merge --squash --delete-branch
+
+# 6. Start next feature (fresh from main)
+git checkout main
+git pull origin main
+git checkout -b feature/next-thing
 ```
 
-Next merge will create `v0.1.1`, then `v0.1.2`, etc.
+**Clean slate every time!** ✨
 
 ---
 
 ## 🧪 Testing Strategy (Vibe Development)
 
-### **During Development (develop branch)**
+### **During Development**
 
 **No required testing** - Iterate fast! 🚀
 
 ```bash
-# Optional: Test if you want
+# Optional: Test if you want confidence
 python3 -m pytest tests/e2e/test_smoke.py  # Quick smoke tests
 
 # Optional: Test specific feature
@@ -161,11 +205,28 @@ python3 -m pytest
 # Or just deploy and test in production (it's just you!)
 ```
 
-### **In Production**
+---
 
-- ✅ Streamlit Cloud monitors app health
-- ✅ You can test manually at https://biogas-sensor.streamlit.app
-- ✅ Easy rollback: Just revert and merge again
+## 🎯 Branch Naming Conventions
+
+For solo vibe-dev, keep it simple:
+
+### **Recommended Patterns**
+
+```bash
+# Generic (simple, familiar)
+git checkout -b develop
+
+# Descriptive (better for tracking)
+git checkout -b feature/cool-thing
+git checkout -b fix/bug-name
+git checkout -b docs/update-readme
+
+# Date-based (organized)
+git checkout -b dev-2026-02-05
+```
+
+**My recommendation**: Use `develop` for simplicity. Recreate it each time.
 
 ---
 
@@ -174,39 +235,75 @@ python3 -m pytest
 ### **Scenario 1: Quick Fix**
 
 ```bash
-# On develop
-git pull origin develop
+# Start from main
+git checkout main
+git pull origin main
+
+# Create fix branch
+git checkout -b fix/urgent-bug
 
 # Make fix
-# ... edit files ...
-
 git add .
 git commit -m "fix: urgent bug fix"
-git push origin develop
+git push origin fix/urgent-bug
 
 # Create PR and merge
-gh pr create --base main --head develop --title "Hotfix: bug fix"
-gh pr merge --squash --delete-branch=false
+gh pr create --base main --head fix/urgent-bug --title "Hotfix: urgent bug"
+gh pr merge --squash --delete-branch
 
-# ✅ Auto-tagged and deployed!
+# ✅ Done! Branch deleted automatically
 ```
 
 ### **Scenario 2: Feature Development**
 
 ```bash
-# Work on develop for days/weeks
-git commit -m "feat: start new feature"
-git commit -m "feat: add more functionality"
-git commit -m "fix: adjust behavior"
-git push origin develop
+# Start from main
+git checkout main
+git pull origin main
 
-# When feature is ready
-gh pr create --base main --head develop --title "Feature: new analytics"
-# Review, then merge
-# ✅ All commits squashed into one, tagged, deployed!
+# Create feature branch
+git checkout -b feature/analytics
+
+# Work on feature for days/weeks
+git commit -m "feat: start analytics"
+git commit -m "feat: add charts"
+git commit -m "fix: adjust layout"
+git push origin feature/analytics
+
+# When ready, create PR and merge
+gh pr create --base main --head feature/analytics --title "Feature: Analytics Dashboard"
+gh pr merge --squash --delete-branch
+
+# ✅ All commits squashed into one, branch deleted
 ```
 
-### **Scenario 3: Rollback**
+### **Scenario 3: Multiple Features in Progress**
+
+```bash
+# Start feature A
+git checkout main
+git checkout -b feature/auth
+# ... work on auth ...
+git push origin feature/auth
+
+# Switch to feature B (don't wait for A)
+git checkout main
+git checkout -b feature/charts
+# ... work on charts ...
+git push origin feature/charts
+
+# Create PRs for both
+gh pr create --base main --head feature/auth --title "Feature: Auth"
+gh pr create --base main --head feature/charts --title "Feature: Charts"
+
+# Merge when ready (any order)
+gh pr merge 1 --squash --delete-branch
+gh pr merge 2 --squash --delete-branch
+
+# ✅ Both branches deleted, clean slate
+```
+
+### **Scenario 4: Rollback**
 
 ```bash
 # Something broke in production!
@@ -215,8 +312,8 @@ gh pr create --base main --head develop --title "Feature: new analytics"
 1. Go to main branch commits
 2. Find bad commit
 3. Click "Revert"
-4. Merge revert PR
-5. ✅ Auto-tagged and deployed!
+4. Create PR, merge
+5. ✅ Deployed!
 
 # Option B: Local revert
 git checkout main
@@ -232,18 +329,19 @@ git push origin main
 
 ### **✅ Do This**
 
-1. **Commit often** - No hooks, no friction
-2. **Push to develop frequently** - Back up your work
-3. **Test manually when you feel like it** - No requirements
-4. **Create PR when ready for production** - Squash all commits
-5. **Let automation handle versioning** - Tags auto-created
+1. **Always start from main** - `git checkout main && git pull`
+2. **Use fresh branches** - Create new branch each time
+3. **Delete after merge** - Always use `--delete-branch` or check the box
+4. **Commit often** - No hooks, no friction
+5. **Test when you want** - Optional, not forced
 
 ### **❌ Don't Do This**
 
-1. **Don't commit directly to main** - Always use develop → PR → main
-2. **Don't manually create tags** - Auto-versioning handles it
-3. **Don't worry about commit messages on develop** - They get squashed
-4. **Don't feel pressured to test** - It's optional during development
+1. **Don't keep branches after merge** - Delete them!
+2. **Don't reuse old branches** - Always create fresh
+3. **Don't branch from branches** - Always branch from main
+4. **Don't worry about commit history** - Squash merge cleans it up
+5. **Don't force yourself to test** - Test when it feels right
 
 ---
 
@@ -253,8 +351,14 @@ git push origin main
 # Check current branch
 git branch
 
-# Switch to develop
-git checkout develop
+# List all branches
+git branch -a
+
+# Switch to main
+git checkout main
+
+# Create new branch from main
+git checkout main && git pull && git checkout -b feature/new-thing
 
 # View recent commits
 git log --oneline -10
@@ -262,11 +366,11 @@ git log --oneline -10
 # View all tags
 git tag -l
 
-# Compare develop with main
-git log main..develop --oneline
+# Delete local branch (after merge)
+git branch -D feature/old-branch
 
-# See what would be in the PR
-git diff main...develop
+# Delete remote branch (if not auto-deleted)
+git push origin :feature/old-branch
 ```
 
 ---
@@ -275,32 +379,43 @@ git diff main...develop
 
 ```
 ┌─────────────────────────────────────────┐
-│ develop branch                          │
-│                                         │
-│ • Fast iteration with Claude Code       │
-│ • No hooks, no friction                 │
-│ • Commit whenever                       │
-│ • Optional testing                      │
-└─────────────────────────────────────────┘
-              ↓ (when ready)
-┌─────────────────────────────────────────┐
-│ Create PR: develop → main               │
-│                                         │
-│ • Review changes (optional)             │
-│ • Squash merge                          │
+│ 1. Start from main                      │
+│    git checkout main && git pull        │
 └─────────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────────┐
-│ main branch                             │
-│                                         │
-│ • Auto-tag: v0.1.0 → v0.1.1            │
-│ • Auto-release notes                    │
-│ • Streamlit Cloud deploys               │
+│ 2. Create feature branch                │
+│    git checkout -b feature/cool-thing   │
 └─────────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────────┐
-│ Production                              │
-│ https://biogas-sensor.streamlit.app     │
+│ 3. Work & commit (vibe mode)            │
+│    • Fast iteration                     │
+│    • No forced testing                  │
+│    • Commit freely                      │
+└─────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────┐
+│ 4. Create PR to main                    │
+│    gh pr create --base main             │
+└─────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────┐
+│ 5. Merge (squash) + delete branch       │
+│    gh pr merge --squash --delete-branch │
+└─────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────┐
+│ 6. Auto-versioning & deploy             │
+│    • Tag created (v0.1.x)               │
+│    • Release published                  │
+│    • Streamlit Cloud deploys            │
+└─────────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────────┐
+│ 7. Repeat (start fresh from main)       │
+│    git checkout main && git pull        │
+│    git checkout -b feature/next-thing   │
 └─────────────────────────────────────────┘
 ```
 
@@ -308,22 +423,16 @@ git diff main...develop
 
 ## 🎉 Summary
 
-**Your workflow:**
+**Your workflow in 3 steps:**
 
-```bash
-# Work on develop (iterate fast)
-git commit -m "whatever"
-git push origin develop
+1. **Create** fresh branch from main
+2. **Work** and commit freely (vibe mode)
+3. **Merge** PR with auto-delete
 
-# When ready for production
-gh pr create --base main --head develop --title "Release: cool stuff"
-gh pr merge --squash --delete-branch=false
-
-# ✅ Done! Auto-tagged, auto-deployed
-```
-
-**That's it!** No complex branching, no forced testing, maximum flow state. 🌊
+**That's it!** Simple, clean, no confusion. 🌊✨
 
 ---
 
-**Questions?** Check GitHub Actions at: https://github.com/ybatsiun/biogas-sensor/actions
+**Last Updated**: February 4, 2026
+**Current Version**: v0.1.2
+**Workflow**: GitHub Flow (Ephemeral Branches)
