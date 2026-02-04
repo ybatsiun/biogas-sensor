@@ -3,7 +3,7 @@
 A robust sensor data collection and management system for PhD dissertation research on Biogas Optimization.
 
 [![Production](https://img.shields.io/badge/Production-Live-success)](https://biogas-sensor.streamlit.app)
-[![Version](https://img.shields.io/badge/Version-v0.1.0-blue)](https://github.com/ybatsiun/biogas-sensor/releases)
+[![Version](https://img.shields.io/badge/Version-v0.1.1-blue)](https://github.com/ybatsiun/biogas-sensor/releases)
 
 ---
 
@@ -74,6 +74,7 @@ App will open at: http://localhost:8501
 
 | Document | Description |
 |----------|-------------|
+| **[Project Status](docs/PROJECT_STATUS.md)** | 🌟 **START HERE** - Complete project context |
 | [Development Workflow](docs/DEVELOPMENT.md) | Git workflow, releasing, versioning |
 | [Testing Guide](docs/TESTING.md) | Testing strategy and commands |
 | [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment guide |
