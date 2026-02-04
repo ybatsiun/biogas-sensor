@@ -5,7 +5,6 @@ Engineer interface component for sensor and record CRUD operations.
 import streamlit as st
 from datetime import datetime
 from typing import Optional
-import time
 from database import queries
 from utils.validation import validate_numeric_value, validate_timestamp, validate_required_field, parse_timestamp
 from utils.i18n import t
@@ -54,16 +53,14 @@ def render_create_sensor_form():
 
             try:
                 with st.spinner("Loading..."):
-                    sensor = queries.create_sensor(
+                    queries.create_sensor(
                         name=name.strip(),
                         unit=unit.strip() if unit else None,
                         comment=comment.strip() if comment else None
                     )
-                st.toast(f"✅ Sensor '{sensor['name']}' created successfully!", icon="✅")
-                time.sleep(1)
                 st.rerun()
             except Exception as e:
-                st.toast(f"❌ Failed to create sensor: {str(e)}", icon="❌")
+                st.error(f"❌ Failed to create sensor: {str(e)}")
 
 
 def render_sensor_list():
@@ -140,12 +137,10 @@ def render_edit_sensor_form(sensor: dict):
                         unit=unit.strip() if unit else None,
                         comment=comment.strip() if comment else None
                     )
-                st.toast("✅ Sensor updated successfully!", icon="✅")
-                time.sleep(1)
                 del st.session_state[f"editing_sensor_{sensor['id']}"]
                 st.rerun()
             except Exception as e:
-                st.toast(f"❌ Failed to update sensor: {str(e)}", icon="❌")
+                st.error(f"❌ Failed to update sensor: {str(e)}")
 
         if cancelled:
             del st.session_state[f"editing_sensor_{sensor['id']}"]
@@ -164,12 +159,10 @@ def render_delete_sensor_confirmation(sensor: dict):
             try:
                 with st.spinner("Loading..."):
                     queries.delete_sensor(sensor['id'])
-                st.toast(f"✅ Sensor '{sensor['name']}' deleted successfully!", icon="✅")
-                time.sleep(1)
                 del st.session_state[f"deleting_sensor_{sensor['id']}"]
                 st.rerun()
             except Exception as e:
-                st.toast(f"❌ Failed to delete sensor: {str(e)}", icon="❌")
+                st.error(f"❌ Failed to delete sensor: {str(e)}")
 
     with col2:
         if st.button("❌ Cancel", key=f"cancel_delete_sensor_{sensor['id']}", use_container_width=True):
@@ -246,16 +239,14 @@ def render_create_record_form():
                     with st.spinner("Loading..."):
                         # Convert local time to UTC for storage
                         recorded_at_utc = local_to_utc(recorded_at_local)
-                        record = queries.create_record(
+                        queries.create_record(
                             sensor_id=selected_sensor_id,
                             recorded_at=recorded_at_utc,
                             value=value
                         )
-                    st.toast(f"✅ Record added successfully! Value: {value}", icon="✅")
-                    time.sleep(1)
                     st.rerun()
                 except Exception as e:
-                    st.toast(f"❌ Failed to create record: {str(e)}", icon="❌")
+                    st.error(f"❌ Failed to create record: {str(e)}")
 
     except Exception as e:
         st.error(f"❌ Failed to load sensors: {str(e)}")
@@ -374,12 +365,10 @@ def render_edit_record_form(record: dict):
                             recorded_at=new_recorded_at_utc,
                             value=value
                         )
-                    st.toast("✅ Record updated successfully!", icon="✅")
-                    time.sleep(1)
                     del st.session_state[f"editing_record_{record['id']}"]
                     st.rerun()
                 except Exception as e:
-                    st.toast(f"❌ Failed to update record: {str(e)}", icon="❌")
+                    st.error(f"❌ Failed to update record: {str(e)}")
 
             if cancelled:
                 del st.session_state[f"editing_record_{record['id']}"]
@@ -400,12 +389,10 @@ def render_delete_record_confirmation(record: dict):
             try:
                 with st.spinner("Loading..."):
                     queries.delete_record(record['id'])
-                st.toast("✅ Record deleted successfully!", icon="✅")
-                time.sleep(1)
                 del st.session_state[f"deleting_record_{record['id']}"]
                 st.rerun()
             except Exception as e:
-                st.toast(f"❌ Failed to delete record: {str(e)}", icon="❌")
+                st.error(f"❌ Failed to delete record: {str(e)}")
 
     with col2:
         if st.button("❌ Cancel", key=f"cancel_delete_record_{record['id']}", use_container_width=True):
