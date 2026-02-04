@@ -8,6 +8,8 @@ jobs:
   tag:
     name: Create Version Tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing tags and creating releases
 
     steps:
       - name: 📥 Checkout code

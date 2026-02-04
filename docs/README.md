@@ -2,12 +2,26 @@
 
 Complete documentation for the Biogas Sensor Data Management System.
 
+## 🆕 For New Claude Code Sessions
+
+**👋 Starting a new session?** Read **[PROJECT_STATUS.md](PROJECT_STATUS.md)** first!
+
+It contains:
+- Complete project context
+- Current version & deployment status
+- Git workflow summary
+- Database schema
+- Known issues
+- Development history
+- Everything you need to continue work
+
 ---
 
 ## 📖 Documentation Guide
 
 | Document | Purpose | Audience |
 |----------|---------|----------|
+| **[Project Status](PROJECT_STATUS.md)** | 🌟 **START HERE** - Complete project context | Everyone (especially new Claude sessions) |
 | **[Development Workflow](DEVELOPMENT.md)** | Git workflow, branching, releasing | Developers |
 | **[Testing Guide](TESTING.md)** | Testing philosophy and commands | Developers |
 | **[Deployment Guide](DEPLOYMENT.md)** | Production deployment and operations | DevOps/Developers |
@@ -41,6 +55,7 @@ Complete documentation for the Biogas Sensor Data Management System.
 ```
 docs/
 ├── README.md           # This file - documentation index
+├── PROJECT_STATUS.md   # 🌟 Complete project context (START HERE)
 ├── DEVELOPMENT.md      # Development workflow & git strategy
 ├── TESTING.md          # Testing philosophy & commands
 └── DEPLOYMENT.md       # Production deployment guide
@@ -147,4 +162,4 @@ Just ask Claude Code to update the relevant doc.
 ---
 
 **Last Updated**: February 4, 2026
-**Current Version**: v0.1.0
+**Current Version**: v0.1.1
