@@ -5,7 +5,6 @@ Engineer interface component for sensor and record CRUD operations.
 import streamlit as st
 from datetime import datetime
 from typing import Optional
-import time
 from database import queries
 from utils.validation import validate_numeric_value, validate_timestamp, validate_required_field, parse_timestamp
 from utils.i18n import t
