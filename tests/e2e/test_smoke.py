@@ -43,19 +43,17 @@ class TestSmoke:
 
     def test_engineer_interface_loads(self, page: Page):
         """Test that Engineer interface loads with key sections."""
-        # Check that "Add New Record" section is present and expanded
+        # Check that "Add New Record" section is present
         add_record_section = page.locator("text=➕ Додати новий запис")
         expect(add_record_section).to_be_visible()
 
-        # Check that form fields are present
-        sensor_field = page.locator("text=Sensor*")
-        expect(sensor_field).to_be_visible()
+        # Check that "Record Management" section is present
+        record_management = page.locator("text=Управління записами")
+        expect(record_management).to_be_visible()
 
-        date_field = page.locator("text=Date*")
-        expect(date_field).to_be_visible()
-
-        value_field = page.locator("text=Value*")
-        expect(value_field).to_be_visible()
+        # Check that "Sensor Management" section is present
+        sensor_management = page.locator("text=Управління датчиками")
+        expect(sensor_management).to_be_visible()
 
     def test_analyst_interface_loads(self, page: Page):
         """Test that Analyst interface loads with charts tab."""

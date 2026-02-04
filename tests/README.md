@@ -18,11 +18,39 @@ playwright install chromium
 
 ## 🚀 Running Tests
 
-### Run all tests
+### Recommended: Comprehensive E2E Test Runner
+
+```bash
+# Run all tests with coverage and HTML reports
+./run_e2e.sh
+
+# Run specific test suite
+./run_e2e.sh --smoke       # Quick smoke tests
+./run_e2e.sh --engineer    # Engineer interface
+./run_e2e.sh --analyst     # Analyst interface
+
+# Debug mode (visible browser + slow motion)
+./run_e2e.sh --debug
+
+# Run in parallel (faster)
+./run_e2e.sh --parallel
+
+# See all options
+./run_e2e.sh --help
+```
+
+**Features:**
+- ✅ Automatically spins up Streamlit app
+- ✅ Runs tests with Playwright
+- ✅ Calculates code coverage
+- ✅ Generates HTML reports (tests + coverage)
+- ✅ Displays formatted results with quick links
+
+### Run all tests (basic)
 
 ```bash
 python3 -m pytest
-# or use the test runner script
+# or use the basic test runner
 ./run_tests.sh
 ```
 

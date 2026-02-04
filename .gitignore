@@ -41,3 +41,10 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Test results and coverage
+test-results/
+.coverage
+htmlcov/
+.pytest_cache/
+playwright-report/
