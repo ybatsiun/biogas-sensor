@@ -13,8 +13,6 @@ from utils.i18n import t
 
 def render_analyst_interface():
     """Render the complete Analyst interface with charts and data tables."""
-    st.header(t('analyst.title'))
-
     # Create tabs for different views
     tab1, tab2 = st.tabs([f"📈 {t('analyst.charts_tab')}", f"📊 {t('analyst.data_table_tab')}"])
 

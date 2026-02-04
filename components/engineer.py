@@ -13,8 +13,6 @@ from utils.i18n import t
 
 def render_engineer_interface():
     """Render the complete Engineer interface with sensor and record management."""
-    st.header(t('engineer.title'))
-
     # Mobile-first: Show content in optimal order for mobile (records first)
     render_record_management()  # Mobile-first: Add Record appears first
     render_sensor_management()  # Then sensor management
