@@ -244,7 +244,7 @@ st.markdown("""
     /* Mobile optimization - reduce padding and margins */
     @media only screen and (max-width: 768px) {
         .block-container {
-            padding-top: 1rem;
+            padding-top: 3rem;
             padding-bottom: 10rem;
             padding-left: 1rem;
             padding-right: 1rem;
@@ -252,6 +252,7 @@ st.markdown("""
 
         h1 {
             font-size: 1.5rem !important;
+            margin-top: 1rem !important;
         }
 
         h2 {
@@ -260,6 +261,24 @@ st.markdown("""
 
         h3 {
             font-size: 1.1rem !important;
+        }
+
+        /* Mobile language dropdown - ensure it has space and doesn't overlap */
+        [data-baseweb="select"] {
+            margin-bottom: 1rem !important;
+        }
+
+        /* Mobile dropdown positioning - ensure adequate space */
+        [data-baseweb="popover"] {
+            top: auto !important;
+            margin-top: 0.5rem !important;
+        }
+
+        /* Mobile dropdown menu - positioned relative to viewport */
+        ul[role="listbox"] {
+            position: absolute !important;
+            max-height: 200px !important;
+            margin-top: 0.5rem !important;
         }
 
         /* Reduce spacing between elements */
