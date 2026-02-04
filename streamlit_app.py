@@ -34,6 +34,17 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    /* Force light mode - disable dark mode adaptation */
+    :root {
+        color-scheme: light only;
+    }
+
+    body, html, [data-testid="stAppViewContainer"] {
+        color-scheme: light only;
+        background-color: white !important;
+        color: #262730 !important;
+    }
+
     /* Hide Streamlit menu and deploy button */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -199,21 +210,6 @@ st.markdown("""
     .stTabs [aria-selected="true"] {
         background-color: #1f77b4;
         color: white !important;
-    }
-
-    /* Dark mode tab fixes for mobile */
-    @media (prefers-color-scheme: dark) {
-        .stTabs [data-baseweb="tab"] {
-            background-color: #262730 !important;
-            color: #fafafa !important;
-            border: 1px solid #4a4a4a !important;
-        }
-
-        .stTabs [aria-selected="true"] {
-            background-color: #1f77b4 !important;
-            color: white !important;
-            border: 1px solid #1f77b4 !important;
-        }
     }
 
     /* Expander styling */
