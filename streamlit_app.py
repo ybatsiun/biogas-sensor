@@ -126,6 +126,55 @@ st.markdown("""
         pointer-events: none !important;
     }
 
+    /* Language selector dropdown fix - ensure it's fully visible */
+    [data-baseweb="select"] {
+        z-index: 10001 !important;
+        cursor: pointer !important;
+    }
+
+    [data-baseweb="select"] > div {
+        cursor: pointer !important;
+    }
+
+    /* Dropdown menu positioning - ensure it appears above everything */
+    [data-baseweb="popover"] {
+        z-index: 99999 !important;
+        position: fixed !important;
+    }
+
+    [role="listbox"] {
+        z-index: 99999 !important;
+    }
+
+    /* Ensure dropdown options are fully visible */
+    [data-baseweb="menu"] {
+        z-index: 99999 !important;
+        max-height: 300px !important;
+    }
+
+    /* Fix dropdown list positioning */
+    ul[role="listbox"] {
+        z-index: 99999 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        background: white !important;
+    }
+
+    /* Pointer cursor for dropdown options */
+    [role="option"] {
+        cursor: pointer !important;
+    }
+
+    /* Ensure Deploy button doesn't overlap dropdown */
+    header[data-testid="stHeader"] {
+        z-index: 1000 !important;
+    }
+
+    /* Version text styling */
+    .stCaption {
+        color: #666 !important;
+        font-size: 0.75rem !important;
+    }
+
     /* Main header styling */
     h1 {
         color: #1f77b4;
@@ -235,17 +284,35 @@ st.markdown("""
 # MAIN APPLICATION
 # ============================================================================
 
+def get_app_version() -> str:
+    """Get current app version from git tag."""
+    try:
+        import subprocess
+        result = subprocess.run(
+            ['git', 'describe', '--tags', '--abbrev=0'],
+            capture_output=True,
+            text=True,
+            timeout=1
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except:
+        pass
+    return "v0.1.4"
+
+
 def main():
     """Main application entry point."""
 
     # Language selector in top-right corner
     col1, col2 = st.columns([5, 1])
     with col1:
+        # Title with version below
         st.title(f"🔬 {t('app.title')}")
+        version = get_app_version()
+        st.caption(version)
     with col2:
         render_language_selector()
-
-    st.divider()
 
     # Create main tabs
     tab1, tab2 = st.tabs([f"👷 {t('tabs.engineer')}", f"📊 {t('tabs.analyst')}"])
