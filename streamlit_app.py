@@ -193,11 +193,27 @@ st.markdown("""
         padding-right: 20px;
         background-color: #f0f2f6;
         border-radius: 5px 5px 0 0;
+        color: #262730 !important;
     }
 
     .stTabs [aria-selected="true"] {
         background-color: #1f77b4;
-        color: white;
+        color: white !important;
+    }
+
+    /* Dark mode tab fixes for mobile */
+    @media (prefers-color-scheme: dark) {
+        .stTabs [data-baseweb="tab"] {
+            background-color: #262730 !important;
+            color: #fafafa !important;
+            border: 1px solid #4a4a4a !important;
+        }
+
+        .stTabs [aria-selected="true"] {
+            background-color: #1f77b4 !important;
+            color: white !important;
+            border: 1px solid #1f77b4 !important;
+        }
     }
 
     /* Expander styling */
@@ -253,6 +269,19 @@ st.markdown("""
         /* Optimize form inputs for mobile */
         .stTextInput, .stSelectbox, .stDateInput, .stTimeInput {
             margin-bottom: 0.5rem;
+        }
+
+        /* Make date/time inputs more mobile-friendly */
+        .stDateInput input, .stTimeInput input {
+            font-size: 16px !important;
+            min-height: 44px !important;
+            padding: 12px !important;
+        }
+
+        /* Improve date/time picker button size */
+        .stDateInput button, .stTimeInput button {
+            min-height: 44px !important;
+            min-width: 44px !important;
         }
 
         /* Make buttons full-width on mobile */
