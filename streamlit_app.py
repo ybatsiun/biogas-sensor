@@ -137,9 +137,8 @@ st.markdown("""
         pointer-events: none !important;
     }
 
-    /* Language selector dropdown fix - ensure it's fully visible */
+    /* Language selector dropdown fix - use normal layering like other Streamlit components */
     [data-baseweb="select"] {
-        z-index: 10001 !important;
         cursor: pointer !important;
     }
 
@@ -147,30 +146,22 @@ st.markdown("""
         cursor: pointer !important;
     }
 
-    /* Dropdown menu positioning - ensure it appears above everything */
+    /* Dropdown menu positioning - use standard z-index, no fixed positioning */
     [data-baseweb="popover"] {
-        z-index: 99999 !important;
-        position: fixed !important;
+        z-index: 1050 !important;
     }
 
-    [role="listbox"] {
-        z-index: 99999 !important;
-        position: fixed !important;
-    }
-
-    /* Ensure dropdown options are fully visible */
+    /* Ensure dropdown options are visible with normal stacking */
     [data-baseweb="menu"] {
-        z-index: 99999 !important;
         max-height: 300px !important;
         overflow-y: auto !important;
     }
 
-    /* Fix dropdown list positioning */
+    /* Fix dropdown list positioning - use normal document flow */
     ul[role="listbox"] {
-        z-index: 99999 !important;
+        z-index: 1050 !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
         background: white !important;
-        position: fixed !important;
         overflow-y: auto !important;
         max-height: 300px !important;
     }
@@ -180,7 +171,7 @@ st.markdown("""
         cursor: pointer !important;
     }
 
-    /* Ensure Deploy button doesn't overlap dropdown */
+    /* Ensure header doesn't overlap dropdown */
     header[data-testid="stHeader"] {
         z-index: 1000 !important;
     }
@@ -268,17 +259,9 @@ st.markdown("""
             margin-bottom: 1rem !important;
         }
 
-        /* Mobile dropdown positioning - ensure adequate space */
-        [data-baseweb="popover"] {
-            top: auto !important;
-            margin-top: 0.5rem !important;
-        }
-
-        /* Mobile dropdown menu - positioned relative to viewport */
+        /* Mobile dropdown menu - use normal stacking, smaller height for mobile */
         ul[role="listbox"] {
-            position: absolute !important;
             max-height: 200px !important;
-            margin-top: 0.5rem !important;
         }
 
         /* Reduce spacing between elements */
