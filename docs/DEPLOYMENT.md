@@ -96,26 +96,56 @@ gh pr merge --squash --delete-branch=false
 
 ## 🏷️ Versioning
 
-### Auto-Versioning
+### VERSION File Workflow
 
-Every merge to `main` automatically:
-1. Creates new tag (v0.1.0 → v0.1.1 → v0.1.2)
-2. Publishes GitHub release
-3. Generates release notes from commits
+**Important**: The app version is stored in the `VERSION` file (not retrieved from git tags).
+
+**Why?** Git tags are created AFTER merge, but Streamlit deploys DURING merge. Using a committed VERSION file ensures the deployed app shows the correct version immediately.
+
+### Releasing a New Version
+
+**Before merging to main**, update the VERSION file:
+
+```bash
+# 1. On your feature branch, update VERSION file
+echo "v0.1.11" > VERSION
+
+# 2. Commit the change
+git add VERSION
+git commit -m "Bump version to v0.1.11"
+
+# 3. Create PR and merge to main
+gh pr create --base main --head your-branch --title "Release v0.1.11"
+gh pr merge --squash --delete-branch=false
+```
+
+**Result**:
+1. ✅ Streamlit deploys with correct version (from VERSION file)
+2. ✅ GitHub Action creates matching git tag automatically
+3. ✅ GitHub release published with notes
 
 ### Version Format
 
-- **Patch** (auto): Bug fixes, small changes
-- **Minor** (manual): New features
-- **Major** (manual): Breaking changes
+- **Patch** (v0.1.X): Bug fixes, small changes
+- **Minor** (v0.X.0): New features, enhancements
+- **Major** (vX.0.0): Breaking changes
 
-**Current**: Auto-increment patch version
+**Examples**:
+- `v0.1.10` → `v0.1.11` (bug fix)
+- `v0.1.11` → `v0.2.0` (new feature)
+- `v0.2.0` → `v1.0.0` (breaking change)
 
-**Manual bump** (when needed):
-```bash
-git tag -a v0.2.0 -m "Minor release: new features"
-git push origin v0.2.0
+### How It Works
+
+```python
+# streamlit_app.py
+def get_app_version() -> str:
+    """Get current app version from VERSION file."""
+    with open('VERSION', 'r') as f:
+        return f.read().strip()
 ```
+
+The VERSION file is committed with your code, so the deployed app always shows the correct version.
 
 ---
 
@@ -288,9 +318,11 @@ Common issues:
 
 ### Before Each Release
 
-- [ ] Code pushed to develop
+- [ ] Code pushed to develop or feature branch
+- [ ] **Update VERSION file** with new version number
+- [ ] Commit VERSION file change
 - [ ] Tested locally (optional)
-- [ ] Review changes: `git log main..develop --oneline`
+- [ ] Review changes: `git log main..your-branch --oneline`
 - [ ] Create PR to main
 - [ ] Review PR (optional for solo dev)
 - [ ] Merge (squash)
@@ -390,7 +422,30 @@ When needed:
 
 ## 📝 Deployment History
 
-**v0.1.0** (Feb 4, 2026) - Initial production deployment
+**v0.1.10** (Feb 5, 2026) - Version display fix
+- Fixed version display using VERSION file instead of git tags
+- Ensures deployed app shows correct version immediately
+- Updated documentation with VERSION file workflow
+
+**v0.1.9** (Feb 5, 2026) - Timezone handling
+- Fixed timezone handling - store UTC, display local time
+- Created timezone utilities (Europe/Kiev)
+- User input converted from local to UTC before storage
+- All timestamps display in user's local timezone
+
+**v0.1.8** (Feb 5, 2026) - Dark mode disabled
+- Disabled dark mode support entirely
+- Force light mode across all devices
+- Consistent UI experience
+
+**v0.1.5-v0.1.7** (Feb 4-5, 2026) - UI/UX improvements
+- Version display in header
+- Cleaner layout (removed redundant headers)
+- Fixed dropdown visibility issues
+- Mobile dark mode improvements
+- Date/time picker UX enhancements
+
+**v0.1.0-v0.1.4** (Feb 4, 2026) - Initial production deployment
 - Core CRUD operations
 - Data visualization
 - Multi-language support
