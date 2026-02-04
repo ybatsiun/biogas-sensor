@@ -43,6 +43,92 @@ Total: 28 E2E tests - ~5 minutes
 
 ---
 
+## 🎯 Comprehensive E2E Test Runner
+
+### **New: `run_e2e.sh` Script**
+
+A comprehensive test runner that automatically:
+- ✅ Spins up Streamlit app
+- ✅ Runs E2E tests with Playwright
+- ✅ Calculates code coverage
+- ✅ Generates HTML reports (tests + coverage)
+- ✅ Displays formatted results
+
+**Quick Start:**
+
+```bash
+# Run all tests with coverage and reports
+./run_e2e.sh
+
+# Run specific test suite
+./run_e2e.sh --smoke
+./run_e2e.sh --engineer
+./run_e2e.sh --analyst
+
+# Debug mode (slow motion + visible browser)
+./run_e2e.sh --debug
+
+# Run in parallel (faster)
+./run_e2e.sh --parallel
+
+# Skip coverage (faster)
+./run_e2e.sh --no-coverage
+```
+
+**What You Get:**
+
+After running `./run_e2e.sh`, you'll see:
+- ✅ Test results summary
+- ✅ Code coverage percentage
+- ✅ Links to HTML reports:
+  - Test report: `test-results/report_TIMESTAMP.html`
+  - Coverage report: `test-results/coverage-html/index.html`
+
+**Example Output:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Test Results Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ All tests passed! 🎉
+
+ℹ Coverage Report:
+  Total Coverage: 72.34%
+✓ HTML Coverage Report: test-results/coverage-html/index.html
+
+✓ HTML Test Report: test-results/report_20260204_223045.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Quick Access
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Open Coverage Report:
+    open test-results/coverage-html/index.html
+
+  Open Test Report:
+    open test-results/report_20260204_223045.html
+```
+
+**All Options:**
+
+```bash
+./run_e2e.sh --help
+
+Options:
+  --smoke          Run only smoke tests
+  --engineer       Run only engineer interface tests
+  --analyst        Run only analyst interface tests
+  --i18n           Run only internationalization tests
+  --headed         Run tests in headed mode (visible browser)
+  --debug          Run tests in debug mode (slow motion + headed)
+  --parallel       Run tests in parallel (faster)
+  --no-coverage    Skip code coverage calculation
+  --no-report      Skip HTML report generation
+  --help           Show this help message
+```
+
+---
+
 ## 🚀 Testing Workflows
 
 ### **During Development (Default: No Testing)**
