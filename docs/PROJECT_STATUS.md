@@ -51,43 +51,49 @@ A PhD research project for Biogas Optimization. A Streamlit web application for:
 
 ---
 
-## 🌳 Git Workflow
+## 🌳 Git Workflow (GitHub Flow)
 
 ### **Branches**
 
 ```
-main (v0.1.1)
+main (v0.1.2)
   ↓ Production, auto-deploys to Streamlit Cloud
-  ↓ Tagged releases: v0.1.0, v0.1.1
+  ↓ Tagged releases: v0.1.0, v0.1.1, v0.1.2
   ↓
-develop (current working branch)
-  ↓ Active development
-  ↓ No CI/CD gates
-  ↓ Push freely
+  ├─ feature/... (ephemeral, deleted after merge)
+  ├─ fix/...     (ephemeral, deleted after merge)
+  └─ develop     (ephemeral, deleted after merge)
 ```
+
+**Key Change**: Using **ephemeral branches** instead of persistent develop.
 
 ### **Development Workflow**
 
 ```bash
-# Daily work on develop
-git checkout develop
+# Start fresh from main
+git checkout main && git pull origin main
+git checkout -b feature/cool-thing  # or: git checkout -b develop
+
+# Work (vibe mode)
 git add .
 git commit -m "feat: whatever"
-git push origin develop
+git push origin feature/cool-thing
 
 # Release to production
-./create_release.sh
-# → Creates PR to main
-# → Merge (squash) on GitHub
-# → Auto-tags (v0.1.1 → v0.1.2)
-# → Auto-deploys to Streamlit Cloud
+gh pr create --base main --head feature/cool-thing
+gh pr merge --squash --delete-branch  # ← Branch auto-deleted!
+
+# Next feature: start fresh from main again
+git checkout main && git pull origin main
+git checkout -b feature/next-thing
 ```
 
-**Philosophy**: Vibe-development
+**Philosophy**: Vibe-development with GitHub Flow
 - No forced testing
 - No CI gates
 - Test when YOU want confidence
 - Fast iteration > Perfect process
+- **Ephemeral branches** (no "X commits ahead" confusion)
 
 ---
 
