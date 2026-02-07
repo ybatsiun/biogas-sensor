@@ -126,13 +126,14 @@ def render_language_selector():
     # Find current index
     current_index = lang_options.index(current_lang) if current_lang in lang_options else 0
 
-    # Render selectbox
-    selected_label = st.selectbox(
+    # Render radio buttons (prevents typing arbitrary text)
+    selected_label = st.radio(
         label="Language / Мова / Język",
         options=lang_labels,
         index=current_index,
         key="language_selector",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        horizontal=True
     )
 
     # Get selected language code
