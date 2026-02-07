@@ -186,7 +186,6 @@ st.markdown("""
     h1 {
         color: #1f77b4;
         padding-bottom: 10px;
-        border-bottom: 2px solid #1f77b4;
     }
 
     /* Tab styling */
@@ -354,15 +353,19 @@ def get_app_version() -> str:
 def main():
     """Main application entry point."""
 
-    # Language selector in top-right corner
-    col1, col2 = st.columns([5, 1])
-    with col1:
-        # Title with version below
+    # Header with title and language selector
+    header_col1, header_col2 = st.columns([3, 1])
+    with header_col1:
         st.title(f"🔬 {t('app.title')}")
         version = get_app_version()
         st.caption(version)
-    with col2:
+    with header_col2:
+        # Push language selector to align with title
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
         render_language_selector()
+
+    # Full-width divider line
+    st.markdown("<hr style='margin-top: -10px; margin-bottom: 20px; border: none; border-top: 2px solid #1f77b4;'>", unsafe_allow_html=True)
 
     # Create main tabs
     tab1, tab2 = st.tabs([f"👷 {t('tabs.engineer')}", f"📊 {t('tabs.analyst')}"])
